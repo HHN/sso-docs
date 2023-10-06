@@ -4,32 +4,42 @@ Dieses Repository bietet eine Einführung in unsere auf [KeyCloak](https://www.k
 
 ## Motivation
 
-In Folge eines Cyberangriffs mussten wir weite Teile unserer IT-Infrastruktur neu aufbauen und in diesem Zuge auch die Passwörter aller Hochschulangehörigen zurücksetzen. Wir haben neue Domänencontroller installiert, Konten für alle Hochschulangehörige angelegt (Studierende und Beschäftigte) und Initialpasswörter vergeben. Die Initialpasswörter bestanden aus einer zufälligen Zeichenkette gefolgt vom Geburtsdatum der Person. Das Active Directory ist das führende System im Hinblick auf die Verwaltung von Konten und Passwörter werden nur an dieser Stelle gespeichert (keine Replica auf LDAP-Servern o. ä.).
+Aufgrund eines Cyberangriffs mussten wir große Teile unserer IT-Infrastruktur neu aufbauen und in diesem Zuge auch die Passwörter aller Hochschulangehörigen zurücksetzen. Wir haben neue Domänencontroller installiert, Konten für alle Hochschulangehörigen (Studierende und Mitarbeiter) eingerichtet und Initialpasswörter vergeben. Die Initialpasswörter bestanden aus einer zufälligen Zeichenfolge, gefolgt vom Geburtsdatum der Person. Das Active Directory ist das führende System für die Verwaltung der Konten und die Passwörter werden nur dort gespeichert (keine Repliken auf LDAP-Servern o. ä.).
 
 ### Warum KeyCloak?
 
-Als "Frontend" dafür haben wir uns für die Identity- und Access-Management-Lösung [KeyCloak](https://www.keycloak.org/) entschieden. Die Gründe dafür waren vielfältig:
+Als "Frontend" dafür haben wir uns für die Identity und Access Management Lösung [KeyCloak] (https://www.keycloak.org/) entschieden. Dafür gab es mehrere Gründe:
 
 * KeyCloak ist Open Source.
-* KeyCloak kann Active Directory als Datenquelle werden.
-* KeyCloak bietet eine webbasierte Accountverwaltung. Über dieses Self-Service-Portal können Nutzer bspw. ihr Passwort ändern, ihre zweite Faktoren verwalten oder aktive Sitzungen einsehen.
-* KeyCloak ermöglicht eine Multi-Faktor-Authentifizierung (MFA) via zeitbasierter Einmaltoken (TOTP) oder FIDO2 (Hardware-Schlüssel, Passkeys, etc.).
-* KeyCloak unterstützt moderne Authentifzierungsverfahren wie OpenID Connect (OIDC) oder SAML 2.0. Darüber lässt sich ein Single Sign-On für *alle* webbasierten Dienste realisieren. Über [eduVPN](https://www.eduvpn.org) sind auch Anmeldungen am VPN per Single Sign-On realisiert und per MFA geschützt.
+* KeyCloak kann Active Directory als Datenquelle nutzen.
+* KeyCloak bietet ein webbasiertes Account Management. Über dieses Self-Service-Portal können Nutzer z. B. ihr Passwort ändern, ihre Zweitfaktoren verwalten oder aktive Sessions einsehen.
+* KeyCloak ermöglicht Multi-Faktor-Authentifizierung (MFA) über zeitbasierte Einmal-Token (TOTP) oder FIDO2 (Hardware-Keys, Passkeys, etc.).
+* KeyCloak unterstützt moderne Authentifizierungsverfahren wie OpenID Connect (OIDC) oder SAML 2.0, mit denen ein Single Sign-On für *alle* webbasierten Dienste realisiert werden kann. Über [eduVPN](https://www.eduvpn.org) werden auch VPN-Logins per Single Sign-On realisiert und per MFA geschützt.
 * KeyCloak erleichtert das "Onboarding" beim Passwort-Rollout.
-* KeyCloak kann transparent "vor" den Shibboleth Identity Provider (IDP) geschaltet werden. Dadurch sind auch Zugriffe auf föderierte Dienste (bwIDM) via Single Sign-On möglich und automatisch per MFA geschützt, ohne den IDP dafür aufwändig anpassen zu müssen.
+* KeyCloak kann dem Shibboleth Identity Provider (IDP) transparent "vorgeschaltet" werden. Damit ist auch der Zugriff auf föderierte Dienste (bwIDM) per Single Sign-On möglich und automatisch per MFA geschützt, ohne dass der IDP dafür aufwändig angepasst werden muss.
 
 ### Warum Single Sign-On?
 
-Per Single Sign-On werden Zugangsdaten zukünftig nur noch an zentraler Stelle in unserem KeyCloak-basierten "Login-Portal" eingegeben. Daraus ergeben sich verschiedene Vorteile:
+Mit Single Sign-On werden Zugangsdaten künftig nur noch an einer zentralen Stelle in unserem KeyCloak-basierten "Login-Portal" eingegeben. Daraus ergeben sich mehrere Vorteile:
 
-* Einzelne Anwendungen erhalten nicht mehr die Klartext-Passwörter der Nutzer, sondern nur noch einen vom Login-Portal ausgestellten, zeitlich befristeten Anmeldetoken. Dadurch sinkt das Risiko der Kompromittierung von Hochschulzugangsdaten via bspw. bei LDAP-basierten Verfahren.
+* Die einzelnen Anwendungen erhalten nicht mehr die Klartext-Passwörter der Nutzer, sondern nur noch einen temporären Login-Token, der vom Login-Portal ausgegeben wird. Dadurch sinkt das Risiko der Kompromittierung von Hochschulzugangsdaten gegenüber z. B. LDAP-basierten Verfahren.
 * Am Login-Portal kann eine starke Authentifizierung über zwei Faktoren erzwungen werden.
-* Am Login-Portal kann ein Monitoring der Anmeldevorgänge erfolgen, um zukünftige Identitätsbasierte Angriffe schneller zu erkennen und nachverfolgen zu können.
-* Am Login-Portal kann an zentraler Stelle ein Brute-Force-Schutz implementiert werden (bspw. Throttling und ggf. IP Blocking).
-* Das Risiko für Phishing-Angriffe sinkt, weil Nutzer zukünftig dazu angehalten werden können, ihre Zugangsdaten nur noch in das offizielle Login-Portal einzugeben. Über geeignete zweite Faktoren (FIDO2) kann das Phishing-Risiko eliminiert werden.
-* Gleichzeitig steigt der Komfort für Nutzer, weil sie sich nur noch einmal am Login-Portal stark authentisieren müssen und anschließend ohne weitere Anmeldungen auf die daran angebunden Anwendungen zugreifen können (Single Sign-On).
+* Am Login-Portal kann ein Monitoring aller Anmeldevorgänge erfolgen, um zukünftige identitätsbasierte Angriffe schneller erkennen und verfolgen zu können.
+* Am Login-Portal kann an zentraler Stelle ein Brute-Force-Schutz implementiert werden (z.B. Throttling und ggf. IP-Blocking).
+* Das Risiko von Phishing-Angriffen sinkt, da Nutzer zukünftig dazu angehalten werden können, ihre Zugangsdaten nur noch im offiziellen Login-Portal einzugeben. Durch geeignete Zweitfaktoren (FIDO2) kann das Phishing-Risiko eliminiert werden.
+* Gleichzeitig steigt der Komfort für Nutzer, da sie sich nur noch einmal am Login-Portal stark authentifizieren müssen und dann ohne weitere Anmeldungen auf die dort angebundenen Anwendungen zugreifen können (Single Sign-On).
 
+### Warum dieses Projekt?
 
+Auf diesen Seiten stellen wir alle Informationen zu unserer KeyCloak-Installation zur Verfügung. Unser Ziel ist es, anderen Hochschulen die Möglichkeit zu geben, dieses Setup zu evaluieren und ggf. zu implementieren.
+
+Neben Architekturbeschreibungen und Anleitungen stellen wir auch Docker- und Konfigurationsdateien zur Verfügung. Diese beinhalten z. B. das Setup von KeyCloak selbst, aber auch Konfigurationsdateien für einen hochverfügbaren Clusterbetrieb oder zusätzliche Sicherheitsmaßnahmen wie einen Brute-Force-Schutz und den Schutz durch eine Web Application Firewall. Darüber hinaus beschreiben wir, wie KeyCloak in Verbindung mit Shibboleth IDP (bwIDM) betrieben werden kann.
+
+Darüber hinaus stellen wir den Quellcode von zwei eigenentwickelten Anwendungen als Open Source zur Verfügung:
+
+* **Onboarding**: Die Onboarding-Anwendung hilft bei der Ersteinrichtung neuer Konten. Nutzer werden zunächst aufgefordert, sich mit ihrem Initialpasswort anzumelden. Anschließend werden sie von einem Assistenten durch die Aktivierung ihres neuen Hochschulkontos geführt. Dabei wird unter anderem ein neues sicheres Passwort konfiguriert, Notfallwiederherstellungscodes generiert und ein zweiter Faktor (TOTP oder FIDO2) registriert. Im Hintergrund kommuniziert die Anwendung mit der KeyCloak API. Diese Anwendung haben wir bei unserem Passwort-Rollout eingesetzt und setzen sie auch heute noch für neue Mitarbeitende und Studierende ein. Mittlerweile haben über 10.000 Personen ihr neues Hochschulkonto darüber in Betrieb genommen.
+
+* **Helpdesk**: Die Helpdesk-Anwendung unterstützt das Zurücksetzen von Passwörtern in Helpdesk-Situationen. Dazu werden Passwort-Reset-Briefe mit zufälligen Passwörtern vorgeneriert, ausgedruckt und kuvertiert am Helpdesk bereitgestellt. Im Sichtfenster befindet sich ein QR-Code mit einer fortlaufenden Nummer. Nach erfolgter Identitätsfeststellung (Ausweisprüfung) wird über die Helpdesk-Anwendung das betroffene Nutzerkonto ausgewählt und der QR-Code gescannt. In diesem Moment wird das Konto auf das im Brief enthaltene Passwort zurückgesetzt. Im Hintergrund kommuniziert die Anwendung mit der KeyCloak API. Über alle Aktivitäten wird ein Audit-Log erstellt, so dass am Ende des Tages die Unterschriftenlisten im Helpdesk mit dem Audit-Log über die dokumentierten Passwort-Resets abgeglichen werden können.
 
 
 ## Customizing
