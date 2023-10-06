@@ -39,7 +39,7 @@ Als neue zentrale Login-Infrastruktur handelt es sich bei unserem Deployment um 
 hochverfügbares Keycloak-Cluster bestehend aus mehreren Komponeten und Erweiterungen, 
 die im nachfolgenden näher beschrieben werden.
 
-![](/home/zowallar/IdeaProjects/hhn-login/src/architecture-keycloak.jpg)
+![](src/architecture-keycloak.jpg)
 
 Die Kommunikation zwischen den einzelnen Netz-Segmenten und Komponeten erfolgt immer verschlüsselt.
 
