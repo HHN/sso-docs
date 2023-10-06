@@ -6,7 +6,7 @@ Als neue zentrale Login-Infrastruktur handelt es sich bei unserem Deployment um 
 hochverfügbares Keycloak-Cluster bestehend aus mehreren Komponenten und Erweiterungen,
 die im Nachfolgenden näher beschrieben werden.
 
-![](src/architecture-keycloak.jpg)
+![](src/keycloak/architecture-keycloak.jpg)
 
 Die Kommunikation zwischen den einzelnen Netz-Segmenten und Komponenten erfolgt immer verschlüsselt.
 
@@ -20,6 +20,8 @@ sowie eine [Web Application Firewall](https://github.com/jcmoraisjr/modsecurity-
 
 Der HAProxy ist zudem für [URL-basiertes Rate-Limitting](https://www.haproxy.com/blog/four-examples-of-haproxy-rate-limiting) konfiguriert,
 um Zugriffe auf den `authenticate` Endpunkt von Keycloak im Ernstfall zu throtteln.
+
+Die entsprechende Konfiguration des HAProxy findet sich hier: [haproxy.cfg](src/keycloak/cfg/haproxy.cfg). Die entsprechende `rates.map`-Datei findet sich [hier](src/keycloak/cfg/rates.map).
 
 ### Keycloak
 
