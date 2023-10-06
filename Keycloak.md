@@ -18,11 +18,24 @@ Einer der beiden Knoten befindet sich dabei im Standby.
 Zusätzlich dazu sind in jeweils einem [Docker](https://www.docker.com/)-Container der zuvor erwähnte Erst-Einrichtungsassistent
 sowie eine [Web Application Firewall](https://github.com/jcmoraisjr/modsecurity-spoa) (ebenfalls als Docker-Container) hinterlegt.
 
-Der HAProxy ist zudem für [URL-basiertes Rate-Limitting](https://www.haproxy.com/blog/four-examples-of-haproxy-rate-limiting) konfiguriert,
+#### HAProxy
+Der HAProxy ist für [URL-basiertes Rate-Limitting](https://www.haproxy.com/blog/four-examples-of-haproxy-rate-limiting) konfiguriert,
 um Zugriffe auf den `authenticate` Endpunkt von Keycloak im Ernstfall zu throtteln.
 
 Die entsprechende Konfiguration des HAProxy findet sich hier: [haproxy.cfg](src/keycloak/cfg/haproxy.cfg). Die entsprechende `rates.map`-Datei findet sich [hier](src/keycloak/cfg/rates.map).
 
+#### Web Application Firewall (WAF)
+
+Die Konfiguration des WAF-Containers befindet sich mit der zugehörigen `docker-compose.yml` [hier](src/keycloak/docker-waf) und basiert auf dem Docker-Image von [jcmoraisjr/modsecurity-spoa](https://github.com/jcmoraisjr/modsecurity-spoa).
+Das explizite Überschreiben und Einbinden der `modsecurity`-Regelsätze ist notwendig, da gerade im Hochschulumfeld einige
+Anwendungen von Drittanbietern existieren, deren Kommunikation mit Keycloak bei Verwendung von Standardregelsätzen in der WAF stecken bleibt.
+
+#### Einrichtungsassistent
+
+Die Anwendung zur Ersteinrichtung wird ebenfalls als Docker-Container betrieben. Der Source-Code dieser Anwendung befindet sich [hier](https://github.com/hhn/sso-welcome).
+Das Deployment erfolgt ebenfalls über eine zugehörige `docker-compose.yml` [hier](src/keycloak/docker-welcome). 
+
+Abweichend zu einem Standardcontainer wird die Anzahl der Worker-Prozesse von `auto` auf `8` gesetzt, um Limitationen von Docker zu umgehen.
 
 ### Keycloak
 

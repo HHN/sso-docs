@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+  waf:
+    restart: always
+    ports:
+      - "127.0.0.1:12345:12345"
+    image: quay.io/jcmoraisjr/modsecurity-spoa
+    command:
+      # Set the numbers of workers to 20 (default: 10)
+      - "-n 20"
+    volumes:
+      - type: bind
+        source: ./modsecurity
+        target: /etc/modsecurity
+    # This section is only required if you are going to send logs to a central instance
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://monitoring.rz.hs-heilbronn.de:514"
+        syslog-format: "rfc5424"
+        tag: "login01-waf"
