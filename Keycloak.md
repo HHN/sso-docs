@@ -23,6 +23,7 @@ um Zugriffe auf den `authenticate` Endpunkt von Keycloak im Ernstfall zu throtte
 
 Die entsprechende Konfiguration des HAProxy findet sich hier: [haproxy.cfg](src/keycloak/cfg/haproxy.cfg). Die entsprechende `rates.map`-Datei findet sich [hier](src/keycloak/cfg/rates.map).
 
+
 ### Keycloak
 
 Die Hochschule betreibt einen Verbund aus drei Keycloak-Knoten, die als Docker-Container auf den jeweiligen virtuellen Maschinen betrieben werden.
@@ -208,6 +209,8 @@ ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start", "--optimized", "--hostname=login
 Als Quelle für Nutzer und Passwörter dient das Active Directory der Hochschule Heilbronn bestehend aus zwei Knoten.
 Zur Vermeidung von Ausfällen (Keycloak unterstützt nur eine einzige Zielurl in seiner Konfiguration) wird auch hier ein
 HAProxy in Verbindung mit keepalived als Load-Balancer eingesetzt.
+
+Die entsprechende Konfiguration des HAProxy befindet sich [hier](src/keycloak/cfg/adlb/haproxy.cfg).
 
 #### Datenbank-Verbund
 
