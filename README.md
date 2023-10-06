@@ -7,7 +7,7 @@ Das Gesamtsystem befindet sich seit dem XX.XX.2023 im produktiven Einsatz für X
 Für den initialen Rollout sowie eine verbesserte Benutzerfreundlichkeit wurden einige Anpassungen an einer Standardinstallation von Keycloak vorgenommen:
 
 1. Theming gemäß den Richtlinien der Hochschule
-2. Entwicklung eines Wizards zur initialen Einrichtung des Passworts und eines zweiten Faktors
+2. Entwicklung eines Einrichtungsassistenten zur Einrichtung des Passworts und eines zweiten Faktors
 
 Die nachfolgenden Videos zeigen den Erst-Anmelde Prozess für Studierende sowie für Beschäftigte. 
 
@@ -51,7 +51,7 @@ Einer der beiden Knoten befindet sich dabei im Standby.
 Zusätzlich dazu sind in jeweils einem [Docker](https://www.docker.com/)-Container der zuvor erwähnte Erst-Einrichtungsassistent 
 sowie eine [Web Application Firewall](https://github.com/jcmoraisjr/modsecurity-spoa) (ebenfalls als Docker-Container) hinterlegt.
 
-Der HAProxy ist zudem für U[RL-basiertes Rate-Limitting](https://www.haproxy.com/blog/four-examples-of-haproxy-rate-limiting) konfiguriert, 
+Der HAProxy ist zudem für [URL-basiertes Rate-Limitting](https://www.haproxy.com/blog/four-examples-of-haproxy-rate-limiting) konfiguriert, 
 um Zugriffe auf den `authenticate` Endpunkt von Keycloak im Ernstfall zu throtteln. 
 
 ### Keycloak
