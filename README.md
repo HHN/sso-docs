@@ -7,7 +7,7 @@ Das Gesamtsystem befindet sich seit dem XX.XX.2023 im produktiven Einsatz für X
 Für den initialen Rollout sowie eine verbesserte Benutzerfreundlichkeit wurden einige Anpassungen an einer Standardinstallation von Keycloak vorgenommen:
 
 1. Theming gemäß den Richtlinien der Hochschule
-2. Entwicklung eines Einrichtungsassistenten zur Einrichtung des Passworts und eines zweiten Faktors
+2. Entwicklung eines Einrichtungsassistenten zur Einrichtung des Passworts und eines zweiten Faktors. Source-Code: [hier](https://github.com/hhn/sso-helpdesk).
 
 Die nachfolgenden Videos zeigen den Erst-Anmelde Prozess für Studierende sowie für Beschäftigte. 
 
