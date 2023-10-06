@@ -1,0 +1,8 @@
+.idea
+*.iml
+target
+ufiles
+cfiles
+android_project
+random_things
+token.txt
