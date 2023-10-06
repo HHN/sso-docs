@@ -12,9 +12,9 @@ Als "Frontend" dafür haben wir uns für die Identity- und Access-Management-Lö
 
 * KeyCloak ist Open Source.
 * KeyCloak kann Active Directory als Datenquelle werden.
-* KeyCloak bietet eine webbasierte Accountverwaltung. Über dieses Self-Service-Portal können bspw. Passwörter geändert, zweite Faktoren verwaltet oder aktive Benutzersitzungen eingesehen werden.
+* KeyCloak bietet eine webbasierte Accountverwaltung. Über dieses Self-Service-Portal können Nutzer bspw. ihr Passwort ändern, ihre zweite Faktoren verwalten oder aktive Sitzungen einsehen.
 * KeyCloak ermöglicht eine Multi-Faktor-Authentifizierung (MFA) via zeitbasierter Einmaltoken (TOTP) oder FIDO2 (Hardware-Schlüssel, Passkeys, etc.).
-* KeyCloak unterstützt moderne Authentifzierungsverfahren wie OpenID Connect (OIDC) oder SAML 2.0. Darüber lässt sich ein Single Sign-On für *alle* webbasierten Dienste realisieren. Über (eduVPN)[https://www.eduvpn.org] sind auch Anmeldungen am VPN per Single Sign-On realisiert und per MFA geschützt.
+* KeyCloak unterstützt moderne Authentifzierungsverfahren wie OpenID Connect (OIDC) oder SAML 2.0. Darüber lässt sich ein Single Sign-On für *alle* webbasierten Dienste realisieren. Über [eduVPN](https://www.eduvpn.org) sind auch Anmeldungen am VPN per Single Sign-On realisiert und per MFA geschützt.
 * KeyCloak erleichtert das "Onboarding" beim Passwort-Rollout.
 * KeyCloak kann transparent "vor" den Shibboleth Identity Provider (IDP) geschaltet werden. Dadurch sind auch Zugriffe auf föderierte Dienste (bwIDM) via Single Sign-On möglich und automatisch per MFA geschützt, ohne den IDP dafür aufwändig anpassen zu müssen.
 
