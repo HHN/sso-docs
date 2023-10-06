@@ -1,0 +1,22 @@
+HTTP/1.0 403 Forbidden
+Cache-Control: no-cache
+Connection: close
+Content-Type: text/html
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ung&uuml;ltige Anfrage</title>
+    <style>
+        body {
+            background: lightgray;
+        }
+    </style>
+</head>
+<body>
+<h1>Ung&uuml;ltige Anfrage</h1>
+<p>Es tut uns leid, aber die angeforderte Seite konnte nicht gefunden werden.</p>
+<p>Bitte &uuml;berpr&uuml;fen Sie die eingegebene URL und versuchen Sie es erneut. Wenn das Problem weiterhin besteht, wenden Sie sich bitte an das <a href="https://www.hs-heilbronn.de/rz"> Rechenzentrum</a>.</p>
+</body>
+</html>

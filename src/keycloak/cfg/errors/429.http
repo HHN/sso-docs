@@ -1,0 +1,21 @@
+HTTP/1.0 429 Too Many Requests
+Cache-Control: no-cache
+Connection: close
+Content-Type: text/html
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>login.hs-heilbronn.d - zu viele Anfragen</title>
+    <style>
+        body {
+            background: lightgray;
+        }
+    </style>
+</head>
+<body>
+<h1>login.hs-heilbronn.de -  zu viele Anfragen</h1>
+<p>Die Anfrage konnte nicht bearbeitet werden, da der Server zu viele Anfragen von Ihrem Ger&auml;t oder Ihrer IP-Adresse empfangen hat. Bitte warten Sie eine Weile und versuchen Sie es erneut. Wenn das Problem weiterhin besteht, kontaktieren Sie bitte das <a href="https://www.hs-heilbronn.de/rz" >Rechenzentrum</a>.
+</body>
+</html>

@@ -1,0 +1,40 @@
+HTTP/1.0 403 Forbidden
+Cache-Control: no-cache
+Connection: close
+Content-Type: text/html
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Wartungsseite</title>
+    <style>
+        body {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            font-family: sans-serif;
+        }
+        h1 {
+            font-size: 3em;
+            margin-top: 100px;
+        }
+        p {
+            font-size: 1.5em;
+            margin-top: 50px;
+        }
+        img {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+<h1>Wartungsarbeiten in Arbeit</h1>
+<p>Wir arbeiten derzeit an unserem SSO-Portal und werden in circa 15 Minuten zurück sein. Bitte haben Sie Geduld und besuchen Sie uns bald wieder!</p>
+</body>
+</html>
