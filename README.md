@@ -53,7 +53,7 @@ Daneben gibt es noch einige andere Authentifizierungssysteme:
 
 * RADIUS-Server: [eduroam](https://eduroam.org) nutzt IEEE 802.1X zur Authentifizierung von WiFi-Clients auf Basis von RADIUS. Dazu betreiben wir derzeit RADIUS-Server basierend auf OpenRADIUS, die das Active Directory als Quelle nutzen. Perspektivisch wollen wir auf [easyroam](https://doku.tid.dfn.de/de:eduroam:easyroam) umsteigen und die Anmeldevorgänge dann auch über das Login-Portal abwickeln.
 
-
+* Shibboleth IDP: Für die Teilnahme an föderierten Diensten (z. B. bwIDM) betreiben Hochschulen in der Regel Identity Provider auf Basis von [Shibboleth](https://www.shibboleth.net/). Wir haben den IDP "hinter" KeyCloak geschaltet, so dass Anmeldevorgänge immer transparent über unser Login-Portal erfolgen. Damit sind auch föderierte Zugänge per Single Sign-On (inkl. MFA, Monitoring, etc.) abgesichert, ohne dass der Shibboleth IDP dafür aufwändig angepasst werden muss.
 
 ## Customizing
 Für den initialen Rollout sowie eine verbesserte Benutzerfreundlichkeit wurden einige Anpassungen an einer Standardinstallation von Keycloak vorgenommen:
