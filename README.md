@@ -45,7 +45,7 @@ Darüber hinaus stellen wir den Quellcode von zwei eigenentwickelten Anwendungen
 
 Active Directory ist das führende System zur Speicherung von Account-Informationen. KeyCloak ist das "Frontend" dazu und bietet eine webbasierte Account-Verwaltung, Multi-Faktor-Authentifizierung, Single Sign-On und eine umfassende API, die u. a. von den Onboarding/Helpdesk-Anwendungen genutzt wird.
 
-[SCHAUBILD HIER]
+![Gesamtüberblick](img/overview.drawio.png)
 
 Daneben gibt es noch einige andere Authentifizierungssysteme:
 
