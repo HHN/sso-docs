@@ -41,6 +41,19 @@ Darüber hinaus stellen wir den Quellcode von zwei eigenentwickelten Anwendungen
 
 * **Helpdesk**: Die Helpdesk-Anwendung unterstützt das Zurücksetzen von Passwörtern in Helpdesk-Situationen. Dazu werden Passwort-Reset-Briefe mit zufälligen Passwörtern vorgeneriert, ausgedruckt und kuvertiert am Helpdesk bereitgestellt. Im Sichtfenster befindet sich ein QR-Code mit einer fortlaufenden Nummer. Nach erfolgter Identitätsfeststellung (Ausweisprüfung) wird über die Helpdesk-Anwendung das betroffene Nutzerkonto ausgewählt und der QR-Code gescannt. In diesem Moment wird das Konto auf das im Brief enthaltene Passwort zurückgesetzt. Im Hintergrund kommuniziert die Anwendung mit der KeyCloak API. Über alle Aktivitäten wird ein Audit-Log erstellt, so dass am Ende des Tages die Unterschriftenlisten im Helpdesk mit dem Audit-Log über die dokumentierten Passwort-Resets abgeglichen werden können.
 
+## Gesamtüberblick
+
+Active Directory ist das führende System zur Speicherung von Account-Informationen. KeyCloak ist das "Frontend" dazu und bietet eine webbasierte Account-Verwaltung, Multi-Faktor-Authentifizierung, Single Sign-On und eine umfassende API, die u. a. von den Onboarding/Helpdesk-Anwendungen genutzt wird.
+
+[SCHAUBILD HIER]
+
+Daneben gibt es noch einige andere Authentifizierungssysteme:
+
+* LDAP-Server: Einige Legacy-Anwendungen benötigen noch eine Anmeldung über LDAP. Solche Anwendungen unterstützen bisher weder OIDC noch SAML2.0. Für eine Übergangszeit erlauben wir die Nutzung, verlangen aber von den Systemverantwortlichen ein Sicherheitskonzept. Die LDAP-Server replizieren keine Passwörter und sind direkt mit dem Active Directory verbunden.
+
+* RADIUS-Server: [eduroam](https://eduroam.org) nutzt IEEE 802.1X zur Authentifizierung von WiFi-Clients auf Basis von RADIUS. Dazu betreiben wir derzeit RADIUS-Server basierend auf OpenRADIUS, die das Active Directory als Quelle nutzen. Perspektivisch wollen wir auf [easyroam](https://doku.tid.dfn.de/de:eduroam:easyroam) umsteigen und die Anmeldevorgänge dann auch über das Login-Portal abwickeln.
+
+
 
 ## Customizing
 Für den initialen Rollout sowie eine verbesserte Benutzerfreundlichkeit wurden einige Anpassungen an einer Standardinstallation von Keycloak vorgenommen:
