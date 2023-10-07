@@ -6,3 +6,4 @@ cfiles
 android_project
 random_things
 token.txt
+*.DS_Store
