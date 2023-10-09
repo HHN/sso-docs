@@ -31,7 +31,7 @@ Die Konfiguration des WAF-Containers befindet sich mit der zugehörigen `docker-
 Das explizite Überschreiben und Einbinden der `modsecurity`-Regelsätze ist notwendig, da gerade im Hochschulumfeld einige
 Anwendungen von Drittanbietern existieren, deren Kommunikation mit Keycloak bei Verwendung von Standardregelsätzen in der WAF stecken bleibt.
 
-#### Einrichtungsassistent
+#### Einrichtungsassistent "Onboarding"
 
 Die Anwendung zur Ersteinrichtung wird ebenfalls als Docker-Container betrieben. Der Source-Code dieser Anwendung befindet sich [hier](https://github.com/hhn/sso-welcome).
 Das Deployment erfolgt ebenfalls über eine zugehörige `docker-compose.yml` [hier](src/keycloak/docker-welcome). 
