@@ -25,5 +25,5 @@ Hier am Beispiel für ein "client-cert":
 - `Client-Zertifikat` für SSTs = Snapshot State Transfers
 - jeweils ein Zertifikat für jeden Datenbankknoten
 
-### Keycloak
-- `Server-Zertifikat` für HTTPS über Port 8443 (sodass Verbindung zwischen Keycloak-Knoten und HAProxy geschützt sind)
+### KeyCloak
+- `Server-Zertifikat` für HTTPS über Port 8443 (sodass Verbindung zwischen KeyCloak-Knoten und HAProxy geschützt sind)

@@ -7,7 +7,7 @@
 Für die Kommunikation innerhalb des Subnetzes sind folgende Ports für Galera und MySQL notwendig.
 
 - Zwischen den Datenbank-Knoten: 3306, 4444, 4567, 4568
-- Zugriff von den Keycloak-Knoten: 3306
+- Zugriff von den KeyCloak-Knoten: 3306
 
 ### Installation von MariaDB und Galera4 aus dedizierter Paketquelle 
 
@@ -45,7 +45,7 @@ tcert = /etc/my.cnf.d/certificates/client-cert.pem
 # Mandatory settings
 wsrep_on                 = ON
 wsrep_provider           = /usr/lib/galera/libgalera_smm.so
-wsrep_cluster_name       = "HHN RZ Keycloak Galera Cluster"
+wsrep_cluster_name       = "HHN RZ KeyCloak Galera Cluster"
 # CAVE: We use gcom:// on the first initial node. Other nodes need the full address string
 #wsrep_cluster_address    = gcomm://IP1,IP2,IP3,IP4,IP5
 wsrep_cluster_address    = gcomm://
