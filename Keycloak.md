@@ -8,11 +8,12 @@ die im Nachfolgenden näher beschrieben werden.
 
 ![](src/keycloak/architecture-keycloak.jpg)
 
-Die Kommunikation zwischen den einzelnen Netz-Segmenten und Komponenten erfolgt immer verschlüsselt.
+Die Kommunikation zwischen den einzelnen Netz-Segmenten und Komponenten erfolgt immer verschlüsselt. 
+Details zum Anlegen einer eigenen CA für interne Zwecke finden sich [hier](CA.md). Dort findet sich auch eine Übersicht der zu erstellenden Zertifikate für interne Cluster-Kommunikation.
 
 ### Login Portal
 
-Keycloak wird an der Hochschule Heilbronn hinter einem 2-Knoten [HAProxy](https://www.haproxy.org/) über eine virtuelle IP Adresse via [keepalived](https://www.keepalived.org/) bereitgestellt.
+Keycloak wird an der Hochschule Heilbronn hinter einem 2-Knoten [HAProxy](https://www.haproxy.org/) über eine virtuelle IP-Adresse via [keepalived](https://www.keepalived.org/) bereitgestellt.
 Einer der beiden Knoten befindet sich dabei im Standby.
 
 Zusätzlich dazu sind in jeweils einem [Docker](https://www.docker.com/)-Container der zuvor erwähnte Erst-Einrichtungsassistent
@@ -25,6 +26,7 @@ um Zugriffe auf den `authenticate` Endpunkt von Keycloak im Ernstfall zu throtte
 Die entsprechende Konfiguration des HAProxy findet sich hier: [haproxy.cfg](src/keycloak/cfg/haproxy.cfg). Die entsprechende `rates.map`-Datei findet sich [hier](src/keycloak/cfg/rates.map).
 
 Abweichend zur Standardinstallation verwenden wir auch teilweise customisierte Fehlerseiten. Diese sind unter [/src/keycloak/cfg/errors](/src/keycloak/cfg/errors) zu finden.
+
 #### Web Application Firewall (WAF)
 
 Die Konfiguration des WAF-Containers befindet sich mit der zugehörigen `docker-compose.yml` [hier](src/keycloak/docker-waf) und basiert auf dem Docker-Image von [jcmoraisjr/modsecurity-spoa](https://github.com/jcmoraisjr/modsecurity-spoa).
@@ -77,3 +79,7 @@ Für die Persistierung der zweiten Faktoren wird ein Galera4 Datenbank Cluster a
 Die übrigen 2 Knoten dienen zur Auflösung von Split-Brain-Situationen des Clusters oder zur Wiederherstellung.
 
 Die Installation des Galera4 Clusters sowie der entsprechenden TLS/SSL Verschlüsslung für die Kommunikation erfolgt gemäß der offiziellen Dokumentation.
+
+##### Hinweis
+
+Galera benötigt ein **re-hashing** der Zertifikate (für jedes Cluster-Mitglied), d.h. `openssl rehash /etc/my.cnf.d/certificates` ausführen.
