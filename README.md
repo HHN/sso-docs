@@ -39,7 +39,7 @@ Darüber hinaus stellen wir den Quellcode von zwei eigenentwickelten Anwendungen
 
 * [**Onboarding**](https://github.com/hhn/sso-welcome): Die Onboarding-Anwendung hilft bei der Ersteinrichtung neuer Konten. Nutzer werden zunächst aufgefordert, sich mit ihrem Initialpasswort anzumelden. Anschließend werden sie von einem Assistenten durch die Aktivierung ihres neuen Hochschulkontos geführt. Dabei wird unter anderem ein neues sicheres Passwort konfiguriert, Notfallwiederherstellungscodes generiert und ein zweiter Faktor (TOTP oder FIDO2) registriert. Im Hintergrund kommuniziert die Anwendung mit der KeyCloak API. Diese Anwendung haben wir bei unserem Passwort-Rollout eingesetzt und setzen sie auch heute noch für neue Mitarbeitende und Studierende ein. Mittlerweile haben über 10.000 Personen ihr neues Hochschulkonto darüber in Betrieb genommen. Die Welcome- bzw. Onboarding-Anwendung ist über https://login.hs-heilbronn.de öffentlich erreichbar.
 
-* [**Helpdesk**](https://github.com/hhn/sso-helpdesk): Die Helpdesk-Anwendung unterstützt das Zurücksetzen von Passwörtern in Helpdesk-Situationen. Dazu werden Passwort-Reset-Briefe mit zufälligen Passwörtern vorgeneriert, ausgedruckt und kuvertiert am Helpdesk bereitgestellt. Im Sichtfenster befindet sich ein QR-Code mit einer fortlaufenden Nummer. Nach erfolgter Identitätsfeststellung (Ausweisprüfung) wird über die Helpdesk-Anwendung das betroffene Nutzerkonto ausgewählt und der QR-Code gescannt. In diesem Moment wird das Konto auf das im Brief enthaltene Passwort zurückgesetzt. Im Hintergrund kommuniziert die Anwendung mit der KeyCloak API. Über alle Aktivitäten wird ein Audit-Log erstellt, so dass am Ende des Tages die Unterschriftenlisten im Helpdesk mit dem Audit-Log über die dokumentierten Passwort-Resets abgeglichen werden können.
+* [**Helpdesk**](https://github.com/hhn/sso-helpdesk): Die Helpdesk-Anwendung unterstützt das Zurücksetzen von Passwörtern in Helpdesk-Situationen. Dazu werden Passwort-Reset-Briefe mit zufälligen Passwörtern vorgeneriert, ausgedruckt und kuvertiert am Helpdesk bereitgestellt. Im Sichtfenster befindet sich ein QR-Code mit einer fortlaufenden Nummer. Ein Beispiel für einen solchen Brief finden Sie [hier](src/demo-brief-helpdesk.pdf). Nach erfolgter Identitätsfeststellung (Ausweisprüfung) wird über die Helpdesk-Anwendung das betroffene Nutzerkonto ausgewählt und der QR-Code gescannt. In diesem Moment wird das Konto auf das im Brief enthaltene Passwort zurückgesetzt. Im Hintergrund kommuniziert die Anwendung mit der KeyCloak API. Über alle Aktivitäten wird ein Audit-Log erstellt, so dass am Ende des Tages die Unterschriftenlisten im Helpdesk mit dem Audit-Log über die dokumentierten Passwort-Resets abgeglichen werden können.
 
 ## Gesamtüberblick
 
@@ -73,15 +73,6 @@ Die nachfolgenden Videos zeigen den Erst-Anmelde Prozess für Studierende sowie 
 
 Hinweis: Die Hochschulleitung hat sich in Rücksprache mit unserem Informationssicherheitsbeauftragten sowie nach zahlreichen technischen Tests für die Ausgabe von
 [Yubikeys](https://www.yubico.com/) an Beschäftigte als zweiter Faktor entschieden.
-
-### Zurücksetzen eines Passworts bzw. eines zweiten Faktors
-
-Keycloak selbst bietet keine schnelle und einfache Möglichkeit Passwörter sowie vorhandene zweite Faktoren zurückzusetzen.
-Hierzu sind stets Administratoren-Rechte erforderlich.
-
-*bla bla zu HelpDesk und den Prozess aus @aykay's Folien*
-
-- [Beispiel Brief zum Download](src/demo-brief-helpdesk.pdf)
 
 ## Technische Architektur
 
