@@ -1,13 +1,4 @@
-# DNS
-
-- keydb01.rz.hs-heilbronn.de
-- keydb02.rz.hs-heilbronn.de
-- keydb03.rz.hs-heilbronn.de
-- keydb04.rz.hs-heilbronn.de
-- keydb05.rz.hs-heilbronn.de
-
-
-# Installation Datenbankcluster
+# Installation Datenbankcluster (am Beispiel von Ubuntu 22.04 LTS)
 
 ## Installation MariaDB und Galera
 
@@ -18,7 +9,7 @@ Für die Kommunikation innerhalb des Subnetzes sind folgende Ports für Galera u
 - Zwischen den Datenbank-Knoten: 3306, 4444, 4567, 4568
 - Zugriff von den Keycloak-Knoten: 3306
 
-### Installation von MariaDB und Galera4 aus dedizierter Paketquelle (am Beispiel von Ubuntu 22.04 LTS)
+### Installation von MariaDB und Galera4 aus dedizierter Paketquelle 
 
 ```
 apt-get install apt-transport-https curl
