@@ -73,13 +73,13 @@ Zur Vermeidung von Ausfällen (KeyCloak unterstützt nur eine einzige Ziel-URL i
 
 Die entsprechende Konfiguration des `HAProxy` befindet sich [hier](src/keycloak/cfg/adlb/haproxy.cfg).
 
-#### Datenbank-Verbund
+### Datenbank-Verbund
 
 Für die Persistierung der zweiten Faktoren wird ein Galera4 Datenbank Cluster aus 5 Knoten eingesetzt, wovon 3 Knoten aktiv am KeyCloak konfiguriert sind.
 Die übrigen 2 Knoten dienen zur Auflösung von Split-Brain-Situationen des Clusters oder zur Wiederherstellung.
 
 Die Installation des Galera4 Clusters sowie der entsprechenden TLS/SSL Verschlüsslung für die Kommunikation erfolgt gemäß der offiziellen Dokumentation.
 
-##### Hinweis
+#### Hinweis
 
 Galera benötigt ein **re-hashing** der Zertifikate (für jedes Cluster-Mitglied), d.h. `openssl rehash /etc/my.cnf.d/certificates` ausführen.
