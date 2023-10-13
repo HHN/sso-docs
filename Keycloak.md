@@ -6,7 +6,7 @@ Als neue zentrale Login-Infrastruktur handelt es sich bei unserem Deployment um 
 hochverfügbares KeyCloak-Cluster bestehend aus mehreren Komponenten und Erweiterungen,
 die im Nachfolgenden näher beschrieben werden.
 
-![](src/KeyCloak/architecture-KeyCloak.jpg)
+![](src/keycloak/architecture-keycloak.jpg)
 
 Die Kommunikation zwischen den einzelnen Netz-Segmenten und Komponenten erfolgt immer verschlüsselt. 
 Details zum Anlegen einer eigenen CA für interne Zwecke finden sich [hier](CA.md). Dort findet sich auch eine Übersicht der zu erstellenden Zertifikate für interne Cluster-Kommunikation.
