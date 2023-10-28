@@ -85,3 +85,30 @@ Die Installation des Galera4 Clusters sowie der entsprechenden TLS/SSL Verschlü
 Galera benötigt ein **re-hashing** der Zertifikate (für jedes Cluster-Mitglied), d.h. `openssl rehash /etc/my.cnf.d/certificates` ausführen.
 
 
+### Konfiguration in Keycloak
+
+#### Login-Flow
+
+Nachfolgend dargestellt ist der Login-Flow, den wir für einen normalen Login verwenden.
+
+![Übersicht über Login-Flow](img/keycloak-flow-overview.png)
+
+Zu sehen ist, dass entweder der Subflow mit x509 Zertifikaten (Client-Zertifikaten) oder der Subflow mit Benutzername und Passwort durchlaufen werden muss.
+
+Der x509 Subflow erfordert das Vorhandensein eines Zertifikats, das in unserem Fall automatisch über andere Wege auf Rechner der Verwaltung installiert wird, wobei sich der private Schlüssel in den TPM-Chips befindet und damit nicht trivial kopier- oder extrahierbar ist. Dies sorgt dafür, dass Verwaltungsmitarbeitende in der Regel ausschließlich von Ihrem Dienstgerät aus arbeiten können.
+
+![X509 Subflow](img/keyfloak-flow-x509.png)
+
+Der Subflow mit Benutzername und Passwort erlaubt die Anmeldung mit ebengeannten Benutzernamen und Passwort und verbietet Mitarbeitenden der Verwaltung das weitere Fortfahren.
+
+![Username Subflow](img/keyfloak-flow-username.png)
+
+Die Modellierung mit "Deny Access" wurde explizit gewählt, um selbstdefinierte und internationale Fehlermeldungen ausgeben zu können.
+
+Unabhängig von der vorigen Anmeldung wird ein zweiter Faktor gefordert (entweder Webauthn oder TOTP), falls das aktuelle Level of Authentication noch nicht erreicht ist.
+
+![MFA subflow](img/keycloak-flow-mfa.png)
+
+Auch hier wurde explizit eine Modellierung mit "Deny access" gewählt, um den Nutzer darauf hinzuweisen, dass er noch keinen zweiten Faktor hinterlegt hat und wo er dies erledigen kann.
+
+Auf der Onboarding-Seite wird eine leicht abgewandelte Version des beschrieben Flows verwendet, der es Nutzern ohne zweiten Faktor erlaubt, sich anzumelden, um einen zweiten Faktor zu hinterlegen. Beim Anmelden auf der Onboarding-Seite ohne zweiten Faktor wird das Level of Authentication niedriger gesetzt, damit ist die Anmeldung auf der Onboarding-Seite ohne MFA nicht ausreichend, um andere Dienste nutzen zu können.
