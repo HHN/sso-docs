@@ -1,93 +1,96 @@
-## Technische Architektur
+# Keycloak Setup
 
-### Überblick
+## Überblick
 
-Als neue zentrale Login-Infrastruktur handelt es sich bei unserem Deployment um ein
-hochverfügbares Keycloak-Cluster bestehend aus mehreren Komponenten und Erweiterungen,
-die im Nachfolgenden näher beschrieben werden.
+Als neue zentrale Login-Infrastruktur handelt es sich bei unserem Deployment um ein hochverfügbares Keycloak-Cluster bestehend aus mehreren Komponenten und Erweiterungen, die im Nachfolgenden näher beschrieben werden.
 
 ![](src/keycloak/architecture-keycloak.jpg)
 
-Die Kommunikation zwischen den einzelnen Netz-Segmenten und Komponenten erfolgt immer verschlüsselt. 
-Details zum Anlegen einer eigenen CA für interne Zwecke finden sich [hier](CA.md). Dort findet sich auch eine Übersicht der zu erstellenden Zertifikate für interne Cluster-Kommunikation.
+Die Kommunikation zwischen den einzelnen Netz-Segmenten und Komponenten erfolgt immer verschlüsselt. Details zum Anlegen einer eigenen CA für interne Zwecke finden sich [hier](CA.md). Dort findet sich auch eine Übersicht der zu erstellenden Zertifikate für die interne Cluster-Kommunikation.
 
-### Login Portal
+## Login-Portal
 
-Keycloak wird an der Hochschule Heilbronn hinter einem 2-Knoten [HAProxy](https://www.haproxy.org/) über eine virtuelle IP-Adresse via [keepalived](https://www.keepalived.org/) bereitgestellt.
-Einer der beiden Knoten befindet sich dabei im Standby.
+Das Login-Portal der Hochschule Heilbronn besteht aus verschiedenen Komponenten:
 
-Zusätzlich dazu sind in jeweils einem [Docker](https://www.docker.com/)-Container der zuvor erwähnte Erst-Einrichtungsassistent
-sowie eine [Web Application Firewall](https://github.com/jcmoraisjr/modsecurity-spoa) (ebenfalls als Docker-Container) hinterlegt.
+1. Dual-Knoten [HAProxy](https://www.haproxy.org/), der über eine virtuelle IP-Adresse via [keepalived](https://www.keepalived.org/) bereitgestellt wird. Der HAProxy ist auch für Rate Limiting verantwortlich. Einer der beiden Knoten befindet sich dabei im Standby.
 
-#### HAProxy
+2. Sämtliche Komponenten werden durch eine [Web Application Firewall](https://github.com/jcmoraisjr/modsecurity-spoa) geschützt, die als Docker-Container betrieben wird.
+
+3. Zusätzlich dazu wird ebenfalls in einem Docker-Container der zuvor erwähnte [Onboarding-Assistent](https://github.com/HHN/sso-welcome) betrieben, eine Webanwendung zur Unterstützung der Accounteinrichtung.
+
+Diese Komponenten werden im nachfolgenden näher beschrieben.
+
+### HAProxy
+
 Der `HAProxy` ist für [URL-basiertes Rate-Limitting](https://www.haproxy.com/blog/four-examples-of-haproxy-rate-limiting) konfiguriert,
 um Zugriffe auf den `authenticate` Endpunkt von Keycloak im Ernstfall zu throtteln.
 
-Die entsprechende Konfiguration des `HAProxy` findet sich hier: [haproxy.cfg](src/keycloak/cfg/haproxy.cfg). Die entsprechende `rates.map`-Datei findet sich [hier](src/keycloak/cfg/rates.map).
+Die entsprechende Konfiguration des `HAProxy` finden sich hier:
 
-Abweichend zur Standardinstallation verwenden wir auch teilweise customisierte Fehlerseiten. Diese sind unter [/src/keycloak/cfg/errors](/src/keycloak/cfg/errors) zu finden.
+* [`haproxy.cfg`](src/keycloak/cfg/haproxy.cfg) mit der zentralen Konfiguration
+* [`rates.map`](src/keycloak/cfg/rates.map) zur Konfiguration des Rate Limiting
 
-#### Web Application Firewall (WAF)
+Abweichend zur Standardinstallation verwenden wir auch teilweise angepasste Fehlerseiten. Diese sind unter [/src/keycloak/cfg/errors](/src/keycloak/cfg/errors) zu finden.
 
-Die Konfiguration des WAF-Containers befindet sich mit der zugehörigen `docker-compose.yml` [hier](src/keycloak/docker-waf) und basiert auf dem Docker-Image von [jcmoraisjr/modsecurity-spoa](https://github.com/jcmoraisjr/modsecurity-spoa).
+### Web Application Firewall
+
+Zum Schutz vor webbasierten Angriffen, sind Zugriffe auf Keycloak durch eine Web Application Firewall (WAF) geschützt. Die Konfiguration des WAF-Containers befindet sich mit der zugehörigen `docker-compose.yml` [hier](src/keycloak/docker-waf) und basiert auf dem Docker-Image von [jcmoraisjr/modsecurity-spoa](https://github.com/jcmoraisjr/modsecurity-spoa).
+
 Das explizite Überschreiben und Einbinden der `modsecurity`-Regelsätze ist notwendig, da gerade im Hochschulumfeld einige
-Anwendungen von Drittanbietern existieren, deren Kommunikation mit Keycloak bei Verwendung von Standardregelsätzen in der WAF stecken bleibt.
+Anwendungen von Drittanbietern existieren, bei denen die Standardregelsätze zu Kommunikationsfehlern führen können.
 
-#### Einrichtungsassistent "Onboarding"
+### Einrichtungsassistent "Onboarding"
 
-Die Anwendung zur Ersteinrichtung wird ebenfalls als Docker-Container betrieben. Der Source-Code dieser Anwendung befindet sich [hier](https://github.com/hhn/sso-welcome).
-Das Deployment erfolgt ebenfalls über eine zugehörige `docker-compose.yml` [hier](src/keycloak/docker-welcome). 
+Die Anwendung zur Ersteinrichtung wird ebenfalls als Docker-Container betrieben. Der Source-Code dieser Anwendung befindet sich unter [https://github.com/hhn/sso-welcome](https://github.com/hhn/sso-welcome).
+Das Deployment erfolgt ebenfalls über eine zugehörige [`docker-compose.yml`](src/keycloak/docker-welcome).
 
 Abweichend zu einem Standardcontainer wird die Anzahl der Worker-Prozesse von `auto` auf `8` gesetzt, um Limitationen von Docker zu umgehen.
 
-### Keycloak
+## Keycloak
 
-Die Hochschule betreibt einen Verbund aus drei Keycloak-Knoten, die als Docker-Container auf den jeweiligen virtuellen Maschinen betrieben werden.
+Die zentrale Komponente des Login-Portals ist ein Verbund aus drei Keycloak-Knoten, die als Docker-Container auf den jeweiligen virtuellen Maschinen betrieben werden. Die Konfiguration von Keycloak wird in den folgenden Abschnitten näher beschrieben.
 
-#### Dockerfile
+### Dockerfile
 
 Neben der oben erwähnten Anpassung an der Cluster-Kommunikation müssen noch andere Anpassungen für den produktiven Betrieb vorgenommen werden.
 Unter anderem müssen die entsprechenden Zertifikate für verschlüsselte Kommunikation hinzugefügt werden und entsprechende Konfiguration für den
 Betrieb hinter einem `HAProxy` gesetzt werden.
 
-Da im Falle der Hochschule Heilbronn für die Mitarbeitenden der Verwaltung zudem Client-Zertifikate zur Authentifikation eingesetzt werden sollen,
-müssen auch für diesen Sonderfall Einstellungen am Keycloak-Container (und am `HAProxy`) vorgenommen werden.
+Da im Fall der Hochschule Heilbronn zusätzlich Client-Zertifikate zur Authentisierung für Beschäftigte der Verwaltung verwendet werden, müssen auch dafür Einstellungen am Keycloak-Container (und am `HAProxy`) vorgenommen werden.
 
 Das entsprechende Dockerfile findet sich [hier](src/keycloak/docker-keycloak/Dockerfile).
 
-#### Infinispan Config
+### Infinispan Config
 
-Die Cluster-Synchronisation zwischen den einzelnen Knoten erfolgt (abweichend von einer Standard-Installation) über verschlüsselte **tcp** (sonst **udp**) Infinispan-Kommunikation.
-Das Infinispan-Konfiguration, die für den Container-Build verwendet wird, findet sich [hier](src/keycloak/docker-keycloak/hhn-infinispan-config.xml).
+Die Cluster-Synchronisation zwischen den einzelnen Knoten erfolgt (abweichend von einer Standard-Installation) über verschlüsselte **tcp** (sonst **udp**) Infinispan-Kommunikation. Die Infinispan-Konfiguration, die für den Container-Build verwendet wird, findet sich [hier](src/keycloak/docker-keycloak/hhn-infinispan-config.xml).
 
-#### Passwort Ausschlüsse
+### Verbotene Passwörter
 
-Neben einer starken Passwort-Policy, die über Active Directory durchgesetzt wird, setzen wir [eine Liste der häufigsten Passwörter](https://github.com/danielmiessler/SecLists/tree/master/Passwords/Common-Credentials) 
-als Ausschlussliste ein. Diese muss nach dem Download noch [konvertiert](src/keycloak/docker-keycloak/convert-pw-list.sh) werden und wird dann im Container-Build von Keycloak in das Container-Image eingebaut.
+Neben einer Passwort-Policy, die über Active Directory durchgesetzt wird, verwenden wir [eine Liste der häufigsten Passwörter](https://github.com/danielmiessler/SecLists/tree/master/Passwords/Common-Credentials) als Ausschlussliste. Diese muss nach dem Download noch [konvertiert](src/keycloak/docker-keycloak/convert-pw-list.sh) werden und wird dann im Container-Build von Keycloak in das Container-Image integriert. Zum Thema Passwörter beachten Sie bitte auch die Hinweise in der Onboarding-Anwendung unter [Limitations](https://github.com/hhn/sso-welcome#limitations).
 
-#### Anbindung an Active Directory
+### Anbindung an Active Directory
 
-Als Quelle für Nutzer und Passwörter dient das Active Directory der Hochschule Heilbronn bestehend aus zwei Knoten.
-Zur Vermeidung von Ausfällen (Keycloak unterstützt nur eine einzige Ziel-URL in seiner Konfiguration) wird auch hier ein
-`HAProxy` in Verbindung mit `keepalived als Load-Balancer eingesetzt.
+Als Quelle für Nutzer und Passwörter dient das Active Directory der Hochschule Heilbronn bestehend aus zwei Knoten. Zur Vermeidung von Ausfällen (Keycloak unterstützt nur eine einzige Ziel-URL in seiner Konfiguration) wird auch hier ein `HAProxy` in Verbindung mit `keepalived` als Load-Balancer eingesetzt.
 
 Die entsprechende Konfiguration des `HAProxy` befindet sich [hier](src/keycloak/cfg/adlb/haproxy.cfg).
 
-### Datenbank-Verbund
+## Datenbank Backend
 
-Für die Persistierung der zweiten Faktoren wird ein Galera4 Datenbank Cluster aus 5 Knoten eingesetzt, wovon 3 Knoten aktiv am Keycloak konfiguriert sind.
-Die übrigen 2 Knoten dienen zur Auflösung von Split-Brain-Situationen des Clusters oder zur Wiederherstellung.
+Für die Persistierung der zweiten Faktoren wird ein `Galera4` Datenbank Cluster aus 5 Knoten eingesetzt, wovon 3 Knoten aktiv am Keycloak konfiguriert sind. Die übrigen 2 Knoten dienen zur Auflösung von Split-Brain-Situationen des Clusters oder zur Wiederherstellung.
 
 Die Installation des Galera4 Clusters sowie der entsprechenden TLS/SSL Verschlüsslung für die Kommunikation erfolgt gemäß der offiziellen Dokumentation.
 
-#### Hinweis
+### Hinweis
 
-Galera benötigt ein **re-hashing** der Zertifikate (für jedes Cluster-Mitglied), d.h. `openssl rehash /etc/my.cnf.d/certificates` ausführen.
+Galera benötigt ein **re-hashing** der Zertifikate (für jedes Cluster-Mitglied), d. h. `openssl rehash /etc/my.cnf.d/certificates` ausführen.
 
+## Konfigurationen innerhalb von Keycloak
 
-### Konfiguration in Keycloak
+### Login-Flow
 
-#### Login-Flow
+Für alle Hochschulangehörigen (Beschäftigte und Studierende) erzwingen wir eine Anmeldung mit zwei Faktoren. Als zweite Merkmale unterstützen wir TOTP oder WebAuthn (Passkeys, Yubikeys, etc.).
+
+Beschäftigte in der Verwaltung haben zusätzlich jeweils ein Client-Zertifikat auf ihren Dienstgeräten installiert (die Verteilung erfolgt über andere Wege). Die privaten Schlüssel befinden sich dabei in den TPM-Chips der Dienstgeräte und können somit nicht trivial kopiert oder extrahiert werden. Damit ist sichergestellt, dass Beschäftigte der Verwaltung sich in der Regel ausschließlich von ihrem Dienstgerät aus anmelden können (u. a. am VPN basierend auf eduVPN).
 
 Nachfolgend dargestellt ist der Login-Flow, den wir für einen normalen Login verwenden.
 
@@ -95,20 +98,20 @@ Nachfolgend dargestellt ist der Login-Flow, den wir für einen normalen Login ve
 
 Zu sehen ist, dass entweder der Subflow mit x509 Zertifikaten (Client-Zertifikaten) oder der Subflow mit Benutzername und Passwort durchlaufen werden muss.
 
-Der x509 Subflow erfordert das Vorhandensein eines Zertifikats, das in unserem Fall automatisch über andere Wege auf Rechner der Verwaltung installiert wird, wobei sich der private Schlüssel in den TPM-Chips befindet und damit nicht trivial kopier- oder extrahierbar ist. Dies sorgt dafür, dass Verwaltungsmitarbeitende in der Regel ausschließlich von Ihrem Dienstgerät aus arbeiten können.
+Der x509-Subflow erfordert das Vorhandensein eiens Client-Zertifikats.
 
 ![X509 Subflow](img/keyfloak-flow-x509.png)
 
-Der Subflow mit Benutzername und Passwort erlaubt die Anmeldung mit ebengeannten Benutzernamen und Passwort und verbietet Mitarbeitenden der Verwaltung das weitere Fortfahren.
+Der Subflow mit nur Benutzername und Passwort ermöglicht das Einloggen und beendet den Flow für Verwaltungsbeschäftigte.
 
 ![Username Subflow](img/keyfloak-flow-username.png)
 
-Die Modellierung mit "Deny Access" wurde explizit gewählt, um selbstdefinierte und internationale Fehlermeldungen ausgeben zu können.
+Die Modellierung mit "Deny Access" wurde explizit gewählt, um selbstdefinierte und internationalisierte Fehlermeldungen ausgeben zu können.
 
-Unabhängig von der vorigen Anmeldung wird ein zweiter Faktor gefordert (entweder Webauthn oder TOTP), falls das aktuelle Level of Authentication noch nicht erreicht ist.
+Unabhängig von der vorigen Anmeldung wird ein zweiter Faktor gefordert, falls das aktuelle "Level of Authentication" noch nicht erreicht ist.
 
 ![MFA subflow](img/keycloak-flow-mfa.png)
 
-Auch hier wurde explizit eine Modellierung mit "Deny access" gewählt, um den Nutzer darauf hinzuweisen, dass er noch keinen zweiten Faktor hinterlegt hat und wo er dies erledigen kann.
+Auch hier wurde explizit eine Modellierung mit "Deny access" gewählt, um den Nutzer darauf hinzuweisen, dass er noch keinen zweiten Faktor hinterlegt hat und erläutert, wo er dies nachholen kann.
 
-Auf der Onboarding-Seite wird eine leicht abgewandelte Version des beschrieben Flows verwendet, der es Nutzern ohne zweiten Faktor erlaubt, sich anzumelden, um einen zweiten Faktor zu hinterlegen. Beim Anmelden auf der Onboarding-Seite ohne zweiten Faktor wird das Level of Authentication niedriger gesetzt, damit ist die Anmeldung auf der Onboarding-Seite ohne MFA nicht ausreichend, um andere Dienste nutzen zu können.
+In der Onboarding-Anwendung wird eine leicht modifizierte Version des beschriebenen Ablaufs verwendet, die es Benutzern ohne zweiten Faktor ermöglicht, sich anzumelden, um dann einen zweiten Faktor zu hinterlegen. Bei der Anmeldung via Onboarding ohne zweiten Faktor wird das "Level of Authentication" niedriger gesetzt, so dass die Anmeldung ohne MFA nicht ausreichend ist, um weitere Dienste nutzen zu können.
